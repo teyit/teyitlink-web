@@ -8,7 +8,9 @@ var uuid = require("uuid");
 var shortId = require('randomstring');
 var dateFormat = require('dateformat');
 var common_format = 'dd-mm-yyyy HH:MM:ss';
-
+var i18n = require("i18n-express");
+var path = require("path");
+var cookieParser = require('cookie-parser');
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY,
     secretAccessKey: process.env.AWS_SECRET_KEY,
@@ -18,6 +20,12 @@ AWS.config.update({
 
 app.use('/public', express.static('static'));
 app.set('view engine', 'pug');
+app.use(cookieParser());
+app.use(i18n({
+  translationsPath: path.join(__dirname, "translations"), // <--- use here. Specify translations files path.
+  siteLangs: ["en","tr"],
+  textsVarName: "translation"
+}));
 
 var lambda = new AWS.Lambda();
 
@@ -28,7 +36,6 @@ var connection = mysql.createConnection({
   database: process.env.DB_NAME
 });
 
-connection.connect();
 app.use(bodyParser.urlencoded({
   extended: true
 }));
@@ -36,7 +43,7 @@ const createNew = function (req, res) {
   var archive_id = uuid();
   var slug = shortId.generate(7);
   var params = {
-    FunctionName: "teyitlink-archive", 
+    FunctionName: "teyitlink-archive",
     Payload: JSON.stringify({
       request_url : req.request_url,
       archive_id : archive_id,
@@ -113,13 +120,11 @@ app.get('/search', function (req, res) {
       res.render('search',{results : results});
     }
 
-  }); 
+  });
 
 });
 
 
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
-})
-
-
+});
