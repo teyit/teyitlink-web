@@ -14,17 +14,22 @@ html(lang='en')
             .topbar
                 .container
                     .row.row1
+                        ul.largenav.pull-left
+                          li.upper-links
+                            a.links(href='/?clang=en',class=(lang=="en"?"active":"")) EN
+                          li.upper-links
+                            a.links(href='/?clang=tr',class=(lang=="tr"?"active":"")) TR
                         ul.largenav.pull-right
                             li.upper-links
-                                a.links(href='https://teyit.org/nedir/', target='_blank') Nedir
+                                a.links(href='https://teyit.org/nedir/', target='_blank') #{translation.aboutPage}
                             li.upper-links
-                                a.links(href='https://teyit.org/metodoloji-ve-ilkeler/', target='_blank') Metodoloji ve İlkeler
+                                a.links(href='https://teyit.org/metodoloji-ve-ilkeler/', target='_blank') #{translation.methodsAndPrinciples}
                             li.upper-links
-                                a.links(href='https://teyit.org/ekip/', target='_blank') Ekip
+                                a.links(href='https://teyit.org/ekip/', target='_blank') #{translation.teamPage}
                             li.upper-links
-                                a.links(href='https://teyit.org/ihbar-2/', target='_blank') İhbar
+                                a.links(href='https://teyit.org/ihbar-2/', target='_blank') #{translation.reportPage}
                             li.upper-links
-                                a.links(href='https://teyit.org/iletisim/', target='_blank') İletişim
+                                a.links(href='https://teyit.org/iletisim/', target='_blank') #{translation.contactPage}
             .container
                 .row.row2
                     .col-sm-2
@@ -42,10 +47,10 @@ html(lang='en')
         .container
             .row.text-center
                 h1(style='margin-top:40px')
-                    strong teyit.link
-                    |  web’de zamanı durdurur.
+                    strong #{translation.appName}
+                    |  #{translation.mainHeader}
                 p.lead
-                    | teyit.link internet sayfalarının kopyasını alarak; çevirimiçi görüntüleyebileceğiniz sekilde kaydeder. <br /> Böylece sayfalar silinmiş olsa bile erişmeye devam edebilirsiniz.
+                    | #{translation.mainDescription} <br /> #{translation.mainChildDescription}
                 .clearfix
                     .col-sm-6.col-sm-offset-3(style='margin-top: 10px; margin-bottom: 30px;')
                         form(method='POST', action='/new')
