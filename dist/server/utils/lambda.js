@@ -43,17 +43,24 @@ var lambdaClient = new _awsSdk2.default.Lambda({
 var createArchive = function createArchive(archive_id, slug) {
   var payload = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
   var request_url = arguments[3];
-  var res = arguments[4];
+  var req = arguments[4];
+  var res = arguments[5];
 
   var params = {
     archive_id: archive_id,
     slug: slug,
     meta_title: payload.title,
     meta_description: payload.description,
+    image: payload.image,
     request_url: request_url
   };
+
+  if (req.query.request_id) {
+    params.request_id = Number(req.query.request_id);
+  }
+
   _archive2.default.create(params).then(function () {
-    if (req.accepts('json')) {
+    if (req.query.client) {
       res.status(200).json({
         data: params,
         status: true
@@ -62,7 +69,7 @@ var createArchive = function createArchive(archive_id, slug) {
       res.status(200).redirect('/' + slug);
     }
   }).catch(function () {
-    if (req.accepts('json')) {
+    if (req.query.client) {
       res.status(503).json({
         status: false
       });
@@ -73,7 +80,6 @@ var createArchive = function createArchive(archive_id, slug) {
 };
 
 var lambda = function lambda(req, res) {
-
   var archive_id = (0, _uuid2.default)();
   var request_url = req.request_url;
   var slug = (0, _randomstring.generate)(7);
@@ -87,9 +93,8 @@ var lambda = function lambda(req, res) {
   };
   lambdaClient.invoke(params, function (err, data) {
     var payload = JSON.parse(data.Payload);
-
     if (err) {
-      if (req.accepts('json')) {
+      if (req.query.client) {
         res.status(503).json({
           status: false
         });
@@ -97,7 +102,7 @@ var lambda = function lambda(req, res) {
         res.status(503).redirect('/?fail-create');
       }
     } else {
-      createArchive(archive_id, slug, payload, request_url, res);
+      createArchive(archive_id, slug, payload, request_url, req, res);
     }
   });
 };

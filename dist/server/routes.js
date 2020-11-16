@@ -33,7 +33,8 @@ var router = (0, _express.Router)();
 // local modules
 router.route('/').get(_homepage2.default.get);
 router.route('/').all(_homepage2.default.all);
-router.route(['/add', '/bookmark', '/new']).all(_archive2.default.new.post, _lambda2.default);
+router.route(['/add', '/bookmark', '/new']).get(_archive2.default.new.get, _lambda2.default);
+router.route(['/add', '/bookmark', '/new']).post(_archive2.default.new.post, _lambda2.default);
 router.route('/search').get(_archive2.default.search.get);
 router.route('/search').all(_homepage2.default.all);
 router.route(/^\/(\w{7})?$/).get(_archive2.default.slug.get);

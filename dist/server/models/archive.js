@@ -32,6 +32,9 @@ var Archive = _database2.default.define('archive', {
   meta_description: {
     type: _sequelize.Sequelize.TEXT
   },
+  image: {
+    type: _sequelize.Sequelize.TEXT
+  },
   request_url: {
     type: _sequelize.Sequelize.STRING
   }

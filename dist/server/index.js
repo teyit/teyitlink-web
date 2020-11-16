@@ -58,6 +58,10 @@ var _redis = require('redis');
 
 var _redis2 = _interopRequireDefault(_redis);
 
+var _i18nExpress = require('i18n-express');
+
+var _i18nExpress2 = _interopRequireDefault(_i18nExpress);
+
 var _expressSession = require('express-session');
 
 var _expressSession2 = _interopRequireDefault(_expressSession);
@@ -74,9 +78,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 // local modules
-
-
-// node modules
 var rateLimiter = new _ratelimit.RateLimit(_redis2.default.createClient({
   host: _config.REDIS_HOST,
   port: _config.REDIS_PORT
@@ -84,6 +85,9 @@ var rateLimiter = new _ratelimit.RateLimit(_redis2.default.createClient({
   interval: 3,
   limit: 10
 }]);
+
+// node modules
+
 var limitMiddleware = new _ratelimit.ExpressMiddleware(rateLimiter, {
   ignoreRedisErrors: true
 });
@@ -123,6 +127,9 @@ var Server = function Server() {
   // compress response
   app.use((0, _compression2.default)());
 
+  // parse cookies
+  app.use((0, _cookieParser2.default)());
+
   // session
   app.use((0, _expressSession2.default)({
     cookie: {
@@ -158,12 +165,17 @@ var Server = function Server() {
     extended: true,
     limit: '1mb'
   }));
+
   app.use(_bodyParser2.default.json({
     limit: '1mb'
   }));
 
-  // parse cookies
-  app.use((0, _cookieParser2.default)());
+  // i18n (multi language)
+  app.use((0, _i18nExpress2.default)({
+    translationsPath: _path2.default.resolve((0, _config.root)('/languages')),
+    siteLangs: ['en', 'tr'],
+    textsVarName: 'translation'
+  }));
 
   // routes
   app.use('/', _routes2.default);
@@ -183,7 +195,7 @@ var Server = function Server() {
     res.locals.error = _config.production ? {} : err;
 
     // print out error details
-    // TODO: create an error page and print errors in a proper way
+    // do: create an error page and print errors in a proper way
     res.status(err.status || 500).json({
       message: res.locals.message,
       error: res.locals.error,
